@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -36,57 +37,52 @@ class _MyHomePageState extends State<MyHomePage> {
   final GitHubApi gitHubApi = new GitHubApi();
   final List<User> _items = [];
 
+  void getUsers(String query) {
+    this.gitHubApi.searchUsers(query).then((users) {
+      this.setState(() {
+        this._items.clear();
+        this._items.addAll(users.items);
+      });
+    });
+  }
+
   Widget getListTile(int index) => this._items.isEmpty
       ? new ListTile()
       : new ListTile(
           leading: new CircleAvatar(
             backgroundImage: new NetworkImage(this._items[index].avatarUrl),
           ),
-          title: new Text(this.gitHubApi.users.items[index].login),
+          title: new Text(this._items[index].login),
         );
 
   @override
-  Widget build(BuildContext context) {
-    this.gitHubApi.searchUsers();
-
-    this.setState(() {
-      this._items.clear();
-      this._items.addAll(this.gitHubApi.users.items);
-    });
-
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new TextField(
-          decoration: new InputDecoration(
-            hintText: 'Search keyword...',
+  Widget build(BuildContext context) => new Scaffold(
+        appBar: new AppBar(
+          title: new TextField(
+            decoration: new InputDecoration(
+              hintText: 'Search keyword...',
+            ),
+            onSubmitted: (text) => this.getUsers(text),
           ),
         ),
-      ),
-      body: new ListView.builder(
-        padding: new EdgeInsets.symmetric(
-          vertical: 8.0,
-          horizontal: 4.0,
+        body: new ListView.builder(
+          padding: new EdgeInsets.symmetric(
+            vertical: 8.0,
+            horizontal: 4.0,
+          ),
+          itemExtent: 70.0,
+          itemCount: this._items.length,
+          itemBuilder: (BuildContext context, int index) =>
+              this.getListTile(index),
         ),
-        itemExtent: 70.0,
-        itemCount: this._items.length,
-        itemBuilder: (BuildContext context, int index) =>
-            this.getListTile(index),
-      ),
-    );
-  }
+      );
 }
 
 class GitHubApi {
-  final String baseUrl = 'https://api.github.com/search/users?q=Tomo';
-  Users users = new Users(0, false, []);
+  final String baseUrl = 'https://api.github.com/search';
 
-  searchUsers() {
-    http.get(this.baseUrl).then((response) {
-      var users = Users.fromJson(JSON.decode(response.body));
-      print(users.totalCount);
-      print(users.incompleteResults);
-      print(users.items[0]);
-      this.users = users;
-    });
+  Future<Users> searchUsers(String query) async {
+    var response = await http.get('${this.baseUrl}/users?q=$query');
+    return Users.fromJson(JSON.decode(response.body));
   }
 }
