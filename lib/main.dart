@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:search_github_flutter/data/user.dart';
+import 'package:search_github_flutter/data/users.dart';
 
 void main() => runApp(new MyApp());
 
@@ -28,15 +33,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final GitHubApi gitHubApi = new GitHubApi();
+  final List<User> _items = [];
+
+  Widget getListTile(int index) => this._items.isEmpty
+      ? new ListTile()
+      : new ListTile(
+          leading: new CircleAvatar(
+            backgroundImage: new NetworkImage(this._items[index].avatarUrl),
+          ),
+          title: new Text(this.gitHubApi.users.items[index].login),
+        );
+
   @override
   Widget build(BuildContext context) {
-    var listTile = new ListTile(
-      leading: new CircleAvatar(
-        backgroundImage: new NetworkImage(
-            'https://avatars3.githubusercontent.com/u/2193123?v=4'),
-      ),
-      title: const Text('Tomoya Shibata'),
-    );
+    this.gitHubApi.searchUsers();
+
+    this.setState(() {
+      this._items.clear();
+      this._items.addAll(this.gitHubApi.users.items);
+    });
 
     return new Scaffold(
       appBar: new AppBar(
@@ -52,9 +68,25 @@ class _MyHomePageState extends State<MyHomePage> {
           horizontal: 4.0,
         ),
         itemExtent: 70.0,
-        itemCount: 30,
-        itemBuilder: (BuildContext context, int index) => listTile,
+        itemCount: this._items.length,
+        itemBuilder: (BuildContext context, int index) =>
+            this.getListTile(index),
       ),
     );
+  }
+}
+
+class GitHubApi {
+  final String baseUrl = 'https://api.github.com/search/users?q=Tomo';
+  Users users = new Users(0, false, []);
+
+  searchUsers() {
+    http.get(this.baseUrl).then((response) {
+      var users = Users.fromJson(JSON.decode(response.body));
+      print(users.totalCount);
+      print(users.incompleteResults);
+      print(users.items[0]);
+      this.users = users;
+    });
   }
 }
