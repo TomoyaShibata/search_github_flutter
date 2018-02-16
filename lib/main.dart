@@ -36,12 +36,16 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GitHubApi gitHubApi = new GitHubApi();
   final List<User> _items = [];
+  bool _isPending = false;
 
   void getUsers(String query) {
+    this.setState(() => this._isPending = true);
+
     this.gitHubApi.searchUsers(query).then((users) {
       this.setState(() {
         this._items.clear();
         this._items.addAll(users.items);
+        this._isPending = false;
       });
     });
   }
@@ -65,16 +69,18 @@ class _MyHomePageState extends State<MyHomePage> {
             onSubmitted: (text) => this.getUsers(text),
           ),
         ),
-        body: new ListView.builder(
-          padding: new EdgeInsets.symmetric(
-            vertical: 8.0,
-            horizontal: 4.0,
-          ),
-          itemExtent: 70.0,
-          itemCount: this._items.length,
-          itemBuilder: (BuildContext context, int index) =>
-              this.getListTile(index),
-        ),
+        body: this._isPending
+            ? new LinearProgressIndicator()
+            : new ListView.builder(
+                padding: new EdgeInsets.symmetric(
+                  vertical: 8.0,
+                  horizontal: 4.0,
+                ),
+                itemExtent: 70.0,
+                itemCount: this._items.length,
+                itemBuilder: (BuildContext context, int index) =>
+                    this.getListTile(index),
+              ),
       );
 }
 
