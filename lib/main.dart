@@ -66,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: new InputDecoration(
               hintText: 'Search keyword...',
             ),
+            onChanged: (text) => this.getUsers(text),
             onSubmitted: (text) => this.getUsers(text),
           ),
         ),
