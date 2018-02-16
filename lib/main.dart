@@ -39,6 +39,13 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isPending = false;
 
   void getUsers(String query) {
+    if (query.isEmpty) {
+      this.setState(() {
+        this._items.clear();
+      });
+      return;
+    }
+
     this.setState(() => this._isPending = true);
 
     this.gitHubApi.searchUsers(query).then((users) {
