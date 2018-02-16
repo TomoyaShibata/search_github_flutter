@@ -110,9 +110,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class GitHubApi {
   final String baseUrl = 'https://api.github.com/search';
+  final Map<String, String> headers = {
+    "Authorization": "bearer [token]",
+  };
 
   Future<Users> searchUsers(String query) async {
-    var response = await http.get('${this.baseUrl}/users?q=$query');
+    var response = await http.get(
+      '${this.baseUrl}/users?q=$query',
+      headers: this.headers,
+    );
     return Users.fromJson(JSON.decode(response.body));
   }
 }
