@@ -10,6 +10,8 @@ class Users {
   static Users fromJson(Map<String, dynamic> json) => new Users(
         json['total_count'],
         json['incomplete_results'],
-        json['items'].map((item) => new User.fromJson(item)).toList(),
+        json['items'] != null
+            ? json['items'].map((item) => new User.fromJson(item)).toList()
+            : [],
       );
 }
