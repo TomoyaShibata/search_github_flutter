@@ -77,18 +77,34 @@ class _MyHomePageState extends State<MyHomePage> {
             onSubmitted: (text) => this.getUsers(text),
           ),
         ),
-        body: this._isPending
-            ? new LinearProgressIndicator()
-            : new ListView.builder(
-                padding: new EdgeInsets.symmetric(
-                  vertical: 8.0,
-                  horizontal: 4.0,
-                ),
-                itemExtent: 70.0,
-                itemCount: this._items.length,
-                itemBuilder: (BuildContext context, int index) =>
-                    this.getListTile(index),
-              ),
+        body: new Column(
+          children: <Widget>[
+            this._isPending
+                ? new LinearProgressIndicator()
+                : new LinearProgressIndicator(
+                    valueColor:
+                        new AlwaysStoppedAnimation<Color>(Colors.transparent),
+                    backgroundColor: Colors.transparent,
+                  ),
+            new Expanded(
+              child: this._items.isEmpty
+                  ? new Container(
+                      margin: const EdgeInsets.only(top: 16.0),
+                      child: new Text("no results"),
+                    )
+                  : new ListView.builder(
+                      padding: new EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 4.0,
+                      ),
+                      itemExtent: 70.0,
+                      itemCount: this._items.length,
+                      itemBuilder: (BuildContext context, int index) =>
+                          this.getListTile(index),
+                    ),
+            ),
+          ],
+        ),
       );
 }
 
