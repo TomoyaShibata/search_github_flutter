@@ -78,6 +78,8 @@ class _MyHomePageState extends State<MyHomePage> {
             onChanged: (text) => this.getUsers(text),
             onSubmitted: (text) => this.getUsers(text),
           ),
+          elevation:
+              Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
         ),
         body: new Column(
           children: <Widget>[
