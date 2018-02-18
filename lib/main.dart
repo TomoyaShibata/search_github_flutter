@@ -103,6 +103,20 @@ class _MyHomePageState extends State<MyHomePage> {
       );
 }
 
+class UserDetailsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text(selectedUser.login),
+        elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
+      ),
+    );
+  }
+}
+
+User selectedUser;
+
 class GitHubApi {
   final String baseUrl = 'https://api.github.com/search';
   final Map<String, String> headers = {
