@@ -17,6 +17,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: new MyHomePage(),
+      routes: {
+        '/user_details_page': (context) => new UserDetailsPage(),
+      },
     );
   }
 }
@@ -59,6 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundImage: new NetworkImage(this._items[index].avatarUrl),
           ),
           title: new Text(this._items[index].login),
+          onTap: () {
+            selectedUser = this._items[index];
+            Navigator.of(context).pushNamed("/user_details_page");
+          },
         );
 
   @override
