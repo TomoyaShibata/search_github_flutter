@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   : new ListView.builder(
                       padding: new EdgeInsets.symmetric(
                         vertical: 8.0,
-                        horizontal: 4.0,
+                        horizontal: .0,
                       ),
                       itemExtent: 70.0,
                       itemCount: this._items.length,
