@@ -138,4 +138,12 @@ class GitHubApi {
     );
     return Users.fromJson(JSON.decode(response.body));
   }
+
+  Future<UserDetails> getUserDetails(String login) async {
+    var response = await http.get(
+      '${this.baseUrl}/users/$login',
+      headers: this.headers,
+    );
+    return new UserDetails.fromJson(JSON.decode(response.body));
+  }
 }
