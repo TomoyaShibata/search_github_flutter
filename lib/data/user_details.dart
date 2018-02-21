@@ -91,6 +91,6 @@ class UserDetails {
         publicGists = json['public_gists'],
         followers = json['followers'],
         following = json['following'],
-        createdAt = json['created_at'],
-        updatedAt = json['updated_at'];
+        createdAt = DateTime.parse(json['created_at']),
+        updatedAt = DateTime.parse(json['updated_at']);
 }
