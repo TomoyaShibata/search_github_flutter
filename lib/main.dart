@@ -126,14 +126,14 @@ class UserDetailsPage extends StatelessWidget {
 User selectedUser;
 
 class GitHubApi {
-  final String baseUrl = 'https://api.github.com/search';
+  final String baseUrl = 'https://api.github.com';
   final Map<String, String> headers = {
     "Authorization": "bearer [token]",
   };
 
   Future<Users> searchUsers(String query) async {
     var response = await http.get(
-      '${this.baseUrl}/users?q=$query',
+      '${this.baseUrl}/search/users?q=$query',
       headers: this.headers,
     );
     return Users.fromJson(JSON.decode(response.body));
