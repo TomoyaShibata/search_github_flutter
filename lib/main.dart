@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:search_github_flutter/data/user.dart';
+import 'package:search_github_flutter/data/user_details.dart';
 import 'package:search_github_flutter/data/users.dart';
 
 void main() => runApp(new MyApp());
@@ -111,7 +112,54 @@ class _MyHomePageState extends State<MyHomePage> {
       );
 }
 
-class UserDetailsPage extends StatelessWidget {
+class UserDetailsPage extends StatefulWidget {
+  @override
+  UserDetailsPageState createState() => new UserDetailsPageState();
+}
+
+class UserDetailsPageState extends State<StatefulWidget> {
+  final GitHubApi gitHubApi = new GitHubApi();
+  UserDetails _userDetails = new UserDetails();
+  bool _isPending = true;
+
+  @override
+  void initState() {
+    super.initState();
+    this._getUserDetails();
+  }
+
+  void _getUserDetails() {
+    this.gitHubApi.getUserDetails(selectedUser.login).then((userDetails) {
+      this.setState(() {
+        this._userDetails = userDetails;
+        this._isPending = false;
+      });
+    });
+  }
+
+  Widget _getUserInfoRow(String label, String value) => new Column(
+        children: <Widget>[
+          new Divider(),
+          new Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+              horizontal: 16.0,
+            ),
+            child: new Row(
+              children: <Widget>[
+                new Text(label),
+                new Expanded(
+                  child: new Text(
+                    value?.isNotEmpty ?? false ? value : "-",
+                    textAlign: TextAlign.end,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      );
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -119,6 +167,37 @@ class UserDetailsPage extends StatelessWidget {
         title: new Text(selectedUser.login),
         elevation: Theme.of(context).platform == TargetPlatform.iOS ? 0.0 : 4.0,
       ),
+      body: this._isPending
+          ? new LinearProgressIndicator()
+          : new Column(
+              children: [
+                new Center(
+                  child: new CircleAvatar(
+                    backgroundImage: new NetworkImage(selectedUser.avatarUrl),
+                  ),
+                ),
+                new Text(
+                  this._userDetails.name,
+                  style: new TextStyle(
+                    fontSize: 32.0,
+                  ),
+                ),
+                new Text(
+                  this._userDetails.login,
+                  style: new TextStyle(
+                    color: Colors.grey,
+                  ),
+                ),
+                this._getUserInfoRow("Location", this._userDetails.location),
+                this._getUserInfoRow("Blog", this._userDetails.blog),
+                this._getUserInfoRow("E-Mail", this._userDetails.email),
+                this._getUserInfoRow(
+                    "Followers", this._userDetails.followers.toString()),
+                this._getUserInfoRow(
+                    "Following", this._userDetails.following.toString()),
+                new Divider(),
+              ],
+            ),
     );
   }
 }
